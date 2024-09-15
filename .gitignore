@@ -25,3 +25,5 @@ boreray-*.tar
 
 # Temporary files for e.g. tests
 /tmp
+.DS_Store
+lib/.DS_Store
