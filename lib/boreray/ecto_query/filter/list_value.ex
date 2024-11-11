@@ -1,4 +1,4 @@
-defmodule POSAdapter.Prism.QueryFilters.ListValue do
+defmodule Boreray.EctoQuery.Filter.ListValue do
   @moduledoc """
   Module for updating a query with list value comparison rules
   """

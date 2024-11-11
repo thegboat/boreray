@@ -23,6 +23,7 @@ defmodule Boreray.MixProject do
     [
       {:ecto, "~> 3.12"},
       {:jason, "~> 1.4"},
+      {:timex, "~> 3.7"},
       {:date_time_parser, "~> 1.2"}
     ]
   end

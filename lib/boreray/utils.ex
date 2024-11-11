@@ -1,5 +1,6 @@
-defmodule POSAdapter.Utils do
+defmodule Boreray.Utils do
   @moduledoc false
+  alias Boreray.Coercion.ToDatetime
 
   defmacro is_datetime(type) do
     quote do:
@@ -19,16 +20,13 @@ defmodule POSAdapter.Utils do
             ]
   end
 
+  def field_info(module, field) when is_atom(field) do
+    field_info(module, field, to_string(field))
+  end
+
   def field_info(module, field) when is_binary(field) do
     as_atom = String.to_existing_atom(field)
-    case module.__schema__(:type, as_atom) do
-      nil ->
-        :error
-
-      type ->
-        source = module.__schema__(:field_source, as_atom) || field
-        {field, type, to_string(source)}
-    end
+    field_info(module, as_atom, field)
   rescue
     ArgumentError -> :error
     e -> raise e
@@ -43,14 +41,24 @@ defmodule POSAdapter.Utils do
     "The field `#{field}` is not valid for resource #{name}"
   end
 
-  def field_info(module, field) when is_atom(field) do
-    field_info(module, to_string(field))
+  def format_datetime!(val, shift_opts \\ []) do
+    case ToDatetime.cast(val) do
+      {:ok, parsed} ->
+        shifted = Timex.shift(parsed, shift_opts)
+        do_format_datetime(shifted)
+      :error ->
+        raise "The filter value could not be parsed into not a date or datetime."
+    end
   end
 
-  def format_datetime(val, opts \\ []) do
-    with {:ok, parsed} <- DateTimeParser.parse(val, assume_time: true) do
-      shifted = Timex.shift(parsed, opts)
-      {:ok, do_format_datetime(shifted)}
+  defp field_info(module, field_as_atom, field_as_string) do
+    case module.__schema__(:type, field_as_atom) do
+      nil ->
+        :error
+
+      type ->
+        source = module.__schema__(:field_source, field_as_atom) || field_as_atom
+        {field_as_string, type, to_string(source)}
     end
   end
 

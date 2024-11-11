@@ -1,11 +1,14 @@
-defmodule Boreray.EctoQuery.Filters do
+defmodule Boreray.EctoQuery.Filter do
   @moduledoc false
-  import Boreray.Utils, only: [is_datetime: 1, is_date: 1]
+  import Boreray.Utils, only: [is_datetime: 1, is_date: 1, field_info: 2]
 
-  def update_query(module, query, params) do
-    with {:ok, tuples} <- flatten(params) do
-      {:ok, Enum.reduce(tuples, query, &evaluate_per_field/2)}
-    end
+  def update({query, params}, module) do
+    {filters, params} = Map.pop(params, "filter")
+    query = (filters || %{})
+    |> flatten(module)
+    |> Enum.reduce(query, &evaluate_per_field/2)
+
+    {query, params}
   end
 
   defp evaluate_per_field({field, _source, type, filters}, src_query) do
@@ -47,16 +50,16 @@ defmodule Boreray.EctoQuery.Filters do
   end
 
   defp evaluate(query, field, _, op, val) do
-    __MODULE__.GenericField.evaluate(query, field, op, val)
+    __MODULE__.Common.evaluate(query, field, op, val)
   end
 
-  defp flatten(params) do
-    params
-    |> get_field_info(module)
+  defp flatten(params, module) do
+    module
+    |> get_field_info(params)
     |> Enum.split_with(&is_binary/1)
     |> case do
       {[], tuples} ->
-        {:ok, Enum.uniq_by(tuples, &elem(&1, 0))}
+        Enum.uniq_by(tuples, &elem(&1, 0))
 
       {[field | _], _} ->
         name =
@@ -65,21 +68,14 @@ defmodule Boreray.EctoQuery.Filters do
           |> Enum.slice(-2..-1)
           |> Enum.join(".")
 
-        {:error, "The field `#{field}` is not valid for resource #{name}"}
+        raise "The field `#{field}` is not valid for resource #{name}"
     end
   end
 
-  defp inject_subsidiary_id(params, module) do
-    Enum.reduce(module.subsidiary_id_fields(), params, fn field, acc ->
-      Map.put(acc, field, %{"eq" => Base.subsidiary_id()})
-    end)
-  end
-
-  defp get_field_info(params, module) do
+  defp get_field_info(module, params) do
     Enum.map(params, fn {field, filters} ->
-      field
-      |> to_string()
-      |> field_info()
+      module
+      |> field_info(field)
       |> case do
         {field, type, source} ->
           {field, source, type, filters}

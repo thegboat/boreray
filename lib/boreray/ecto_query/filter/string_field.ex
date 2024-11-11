@@ -1,10 +1,10 @@
-defmodule POSAdapter.Prism.QueryFilters.StringField do
+defmodule Boreray.EctoQuery.Filter.StringField do
   @moduledoc """
   Module for updating a query with string field comparison rules
   """
 
   import Ecto.Query, only: [where: 3]
-  alias POSAdapter.Prism.QueryFilters.GenericField
+  alias Boreray.EctoQuery.Filter.Common
 
   @spec evaluate(Ecto.Query.t(), atom(), String.t(), any()) :: Ecto.Query.t()
   def evaluate(query, field, op, val) do
@@ -20,6 +20,6 @@ defmodule POSAdapter.Prism.QueryFilters.StringField do
   end
 
   def do_evaluate(query, field, op, val) do
-    GenericField.evaluate(query, field, op, val)
+    Common.evaluate(query, field, op, val)
   end
 end

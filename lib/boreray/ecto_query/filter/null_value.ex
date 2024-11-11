@@ -1,4 +1,4 @@
-defmodule POSAdapter.Prism.QueryFilters.NullValue do
+defmodule Boreray.EctoQuery.Filter.NullValue do
   @moduledoc """
   Module for updating a query with null value comparison rules
   """

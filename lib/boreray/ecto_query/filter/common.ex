@@ -1,4 +1,4 @@
-defmodule POSAdapter.Prism.QueryFilters.GenericField do
+defmodule Boreray.EctoQuery.Filter.Common do
   @moduledoc """
   Module for updating a query with generic comparison rules for most fields
   """

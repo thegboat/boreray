@@ -8,7 +8,9 @@ defmodule Boreray.Coercion.ToDatetime do
 
   def cast(%DateTime{} = val), do: val
 
-  def cast(%Date{} = val), do: val
+  def cast(%Date{} = val) do
+    DateTime.new(val, Time.new!(0, 0, 0), "Etc/UTC")
+  end
 
   def cast(%NaiveDateTime{} = val) do
     DateTime.from_naive(val, "Etc/UTC")
