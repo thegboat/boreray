@@ -1,6 +1,5 @@
 # Boreray
-
-**TODO: Add description**
+A unified query language
 
 ![image info](./colophon.jpg)
 
