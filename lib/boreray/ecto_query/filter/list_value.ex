@@ -10,28 +10,28 @@ defmodule Boreray.EctoQuery.Filter.ListValue do
     do_evaluate(query, field, op, val)
   end
 
-  defp do_evaluate(query, _field, "in", []) do
+  defp do_evaluate(query, _field, :in, []) do
     where(query, [x], false)
   end
 
-  defp do_evaluate(query, field, "in", val) do
+  defp do_evaluate(query, field, :in, val) do
     where(query, [x], field(x, ^field) in ^val)
   end
 
-  defp do_evaluate(query, _field, "not_in", []) do
+  defp do_evaluate(query, _field, :not_in, []) do
     query
   end
 
-  defp do_evaluate(query, field, "not_in", val) do
+  defp do_evaluate(query, field, :not_in, val) do
     where(query, [x], is_nil(field(x, ^field)) or field(x, ^field) not in ^val)
   end
 
-  defp do_evaluate(query, field, "eq", val) do
-    do_evaluate(query, field, "in", val)
+  defp do_evaluate(query, field, :eq, val) do
+    do_evaluate(query, field, :in, val)
   end
 
-  defp do_evaluate(query, field, "not", val) do
-    do_evaluate(query, field, "not_in", val)
+  defp do_evaluate(query, field, :not, val) do
+    do_evaluate(query, field, :not_in, val)
   end
 
   defp do_evaluate(_query, _field, op, _val) do

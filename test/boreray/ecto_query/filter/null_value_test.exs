@@ -9,7 +9,7 @@ defmodule Boreray.EctoQuery.Filter.NullValueTest do
 
   describe "evaluate/3" do
     test "updates query with `is null` when operator is `eq`", %{query: query} do
-      query = NullValue.evaluate(query, :foo, "eq")
+      query = NullValue.evaluate(query, :foo, :eq)
       q = inspect(query)
 
       assert q =~ ~r/where:/
@@ -17,7 +17,7 @@ defmodule Boreray.EctoQuery.Filter.NullValueTest do
     end
 
     test "updates query with `not null` when operator is `not`", %{query: query} do
-      query = NullValue.evaluate(query, :foo, "not")
+      query = NullValue.evaluate(query, :foo, :not)
       q = inspect(query)
 
       assert q =~ ~r/where:/
@@ -25,7 +25,7 @@ defmodule Boreray.EctoQuery.Filter.NullValueTest do
     end
 
     test "updates query to force failure when operator is neither `not` or `eq`", %{query: query} do
-      query = NullValue.evaluate(query, :foo, "lt")
+      query = NullValue.evaluate(query, :foo, :lt)
       q = inspect(query)
 
       assert q =~ ~r/where:/

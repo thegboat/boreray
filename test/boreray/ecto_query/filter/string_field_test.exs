@@ -9,7 +9,7 @@ defmodule Boreray.EctoQuery.Filter.StringFieldTest do
 
   describe "evaluate/4" do
     test "updates query properly when operator is `like`", %{query: query} do
-      query = StringField.evaluate(query, :foo, "like", "astring")
+      query = StringField.evaluate(query, :foo, :like, "astring")
       q = inspect(query)
 
       assert q =~ ~r/where:/
@@ -17,7 +17,7 @@ defmodule Boreray.EctoQuery.Filter.StringFieldTest do
     end
 
     test "updates query properly when operator is `not_like`", %{query: query} do
-      query = StringField.evaluate(query, :foo, "not_like", "astring")
+      query = StringField.evaluate(query, :foo, :not_like, "astring")
       q = inspect(query)
 
       assert q =~ ~r/where:/

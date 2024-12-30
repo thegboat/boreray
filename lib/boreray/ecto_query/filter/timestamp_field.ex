@@ -19,27 +19,27 @@ defmodule Boreray.EctoQuery.Filter.TimestampField do
     do_evaluate(query, field, op, formatted)
   end
 
-  defp do_evaluate(query, field, "eq", val) do
+  defp do_evaluate(query, field, :eq, val) do
     where(query, [x], field(x, ^field) == to_timestamp(val))
   end
 
-  defp do_evaluate(query, field, "gt", val) do
+  defp do_evaluate(query, field, :gt, val) do
     where(query, [x], field(x, ^field) > to_timestamp(val))
   end
 
-  defp do_evaluate(query, field, "lt", val) do
+  defp do_evaluate(query, field, :lt, val) do
     where(query, [x], field(x, ^field) < to_timestamp(val))
   end
 
-  defp do_evaluate(query, field, "gte", val) do
+  defp do_evaluate(query, field, :gte, val) do
     where(query, [x], field(x, ^field) >= to_timestamp(val))
   end
 
-  defp do_evaluate(query, field, "lte", val) do
+  defp do_evaluate(query, field, :lte, val) do
     where(query, [x], field(x, ^field) <= to_timestamp(val))
   end
 
-  defp do_evaluate(query, field, "not", val) do
+  defp do_evaluate(query, field, :not, val) do
     where(query, [x], field(x, ^field) != to_timestamp(val))
   end
 

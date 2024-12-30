@@ -1,10 +1,10 @@
 defmodule Boreray.EctoQuery do
   @moduledoc false
 
-  def build(queryable, params, module) do
-    {queryable, params}
-    |> __MODULE__.Pagination.update()
-    |> __MODULE__.Sort.update(module)
-    |> __MODULE__.Filter.update(module)
+  def build(queryable, plan) do
+    queryable
+    |> __MODULE__.Pagination.update(plan)
+    |> __MODULE__.Sort.update(plan)
+    |> __MODULE__.Filter.update(plan)
   end
 end

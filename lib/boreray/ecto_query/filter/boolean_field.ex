@@ -8,8 +8,8 @@ defmodule Boreray.EctoQuery.Filter.BooleanField do
   def evaluate(query, field, op, val) do
     case {cast(val), op} do
       {:error, val} -> raise "The value `#{val}` could not be cast to `boolean` type."
-      {casted, "eq"} -> where(query, [x], field(x, ^field) == ^casted)
-      {casted, "not"} -> where(query, [x], field(x, ^field) != ^casted)
+      {casted, :eq} -> where(query, [x], field(x, ^field) == ^casted)
+      {casted, :not} -> where(query, [x], field(x, ^field) != ^casted)
       _ -> raise "`boolean` type fields can only be used with `eq` or `not` operator"
     end
   end
