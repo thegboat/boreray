@@ -12,7 +12,7 @@ defmodule Boreray.Planner do
   end
 
   def build_plan(params, schema) when is_map(params) do
-    requested = params
+    params
     |> Stream.map(fn {k, v} -> add_param(to_string(k), v, schema) end)
     |> Stream.reject(fn {_k, v, _e} -> is_nil(v) end)
     |> Enum.reduce(%Plan{}, fn {key, value, errors}, plan ->
@@ -58,7 +58,7 @@ defmodule Boreray.Planner do
   defp add_param(_, _, _), do: {:unsupported, nil, []}
 
   def flatten_to_operations(params, schema) do
-    {operations, errors} = params
+    params
     |> Stream.flat_map(fn {field, ops} ->
       build_operations(field, schema[field], ops)
     end)
@@ -79,6 +79,10 @@ defmodule Boreray.Planner do
     build_operation(field, type, "eq", val)
   end
 
+  defp build_operation(field, _type, op, _val) when op not in @ops do
+    invalid_op_error(field, op)
+  end
+
   defp build_operation(field, type, op, list) when is_list(list) do
     op =
       case op do
@@ -86,8 +90,7 @@ defmodule Boreray.Planner do
         "is_not" -> :not_in
         "eq" -> :in
         "not" -> :not_in
-        keep when keep in @ops -> String.to_atom(keep)
-        _ -> nil
+        keep -> String.to_atom(keep)
       end
 
     %Operation{

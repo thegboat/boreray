@@ -4,7 +4,6 @@ defmodule Boreray.EctoQuery.Filter.TimestampField do
   """
 
   import Ecto.Query, only: [where: 3]
-  import Boreray.Utils, only: [format_datetime!: 1]
   alias Boreray.EctoQuery.Filter.Common
 
   defmacrop to_timestamp(val) do
@@ -15,7 +14,7 @@ defmodule Boreray.EctoQuery.Filter.TimestampField do
 
   @spec evaluate(Ecto.Query.t(), atom(), String.t(), any()) :: Ecto.Query.t()
   def evaluate(query, field, op, val) do
-    formatted = format_datetime!(val)
+    formatted = Boreray.Coercion.ToDatetime.format_datetime!(val)
     do_evaluate(query, field, op, formatted)
   end
 

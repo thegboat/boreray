@@ -36,20 +36,7 @@ defmodule Boreray.EctoQuery.Filter do
     __MODULE__.StringField.evaluate(query, field, op, val)
   end
 
-  defp evaluate(query, _field, :any, _op, _val) do
-    __MODULE__.StringField.evaluate(query, field, op, val)
-  end
-
   defp evaluate(query, field, _, op, val) do
     __MODULE__.Common.evaluate(query, field, op, val)
-  end
-
-  def flatten_to_operation_tuples(filters, schema) do
-    Enum.flat_map(filters, fn {field, ops} ->
-      type = Map.fetch!(schema, field)
-      Enum.map(ops, fn {op, val} ->
-        {field, type, op, val}
-      end)
-    end)
   end
 end

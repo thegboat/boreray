@@ -1,8 +1,6 @@
 defmodule Boreray.Schema do
   @moduledoc false
 
-  import Boreray.Utils, only: [to_atom: 1]
-
   @types %{
     "integer" => :integer,
     "float" => :decimal,
@@ -14,13 +12,13 @@ defmodule Boreray.Schema do
     "binary_id" => :string,
     "utc_datetime" => :datetime,
     "naive_datetime" => :datetime,
+    "date" => :datetime,
+    "utc_datetime_usec" => :datetime,
+    "naive_datetime_usec" => :datetime,
     "map" => :any,
     "any" => :any,
-    "date" => :datetime,
     "time" => :time,
-    "time_usec" => :time,
-    "utc_datetime_usec" => :datetime,
-    "naive_datetime_usec" => :datetime
+    "time_usec" => :time
   }
 
   def build(module) when is_atom(module) do
@@ -40,7 +38,7 @@ defmodule Boreray.Schema do
       type = @types[to_string(t)]
 
       if is_nil(type) do
-        raise_unknown_type(type)
+        raise_unknown_type(t)
       else
         {to_atom(f), type}
       end
@@ -56,7 +54,7 @@ defmodule Boreray.Schema do
   end
 
   defp module_build(module) do
-    build(module.__field_info__)
+    build(module.__field_info__())
   end
 
   defp sorta_ecto?(module) do

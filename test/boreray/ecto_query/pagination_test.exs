@@ -18,11 +18,11 @@ defmodule Boreray.EctoQuery.PaginationTest do
 
   describe "update/1" do
     test "adds pagination accordingly", %{query: initial} do
-      query = Pagination.update(initial, %{"limit" => 25})
+      query = Pagination.update(initial, %{limit: 25})
       q = inspect(query)
       assert q =~ ~r/limit: \^25/
 
-      query = Pagination.update(initial, %{"page" => 3, "limit" => 25})
+      query = Pagination.update(initial, %{page: 3, limit: 25})
       q = inspect(query)
 
       assert q =~ ~r/limit: \^25, offset: \^50/
