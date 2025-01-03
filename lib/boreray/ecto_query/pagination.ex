@@ -4,6 +4,7 @@ defmodule Boreray.EctoQuery.Pagination do
 
   def update(query, %{page: page, limit: limit}) do
     offset = (page - 1) * limit
+
     query
     |> offset(^offset)
     |> limit(^limit)

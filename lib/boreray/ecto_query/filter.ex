@@ -3,11 +3,12 @@ defmodule Boreray.EctoQuery.Filter do
 
   def update(src_query, %{filter: operations}) do
     Enum.reduce(operations, src_query, fn %{
-      op: op,
-      type: type,
-      field: field,
-      value: value
-    }, query ->
+                                            op: op,
+                                            type: type,
+                                            field: field,
+                                            value: value
+                                          },
+                                          query ->
       evaluate(query, field, type, op, value)
     end)
   end

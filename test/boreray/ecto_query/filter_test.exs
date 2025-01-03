@@ -30,13 +30,15 @@ defmodule Boreray.EctoQuery.FilterTest do
 
     test "builds a query", %{query: initial} do
       query =
-        Filter.update(initial, %{filter: [
-          %{field: :boolean_field, type: :boolean, op: :eq, value: "true"},
-          %{field: :string_field, type: :string, op: :eq, value: "astring"},
-          %{field: :integer_field, type: :integer, op: :eq, value: 5},
-          %{field: :float_field, type: :float, op: :eq, value: 5.0},
-          %{field: :datetime_field, type: :datetime, op: :gt, value: "2020-01-01T01:01:01"}
-        ]})
+        Filter.update(initial, %{
+          filter: [
+            %{field: :boolean_field, type: :boolean, op: :eq, value: "true"},
+            %{field: :string_field, type: :string, op: :eq, value: "astring"},
+            %{field: :integer_field, type: :integer, op: :eq, value: 5},
+            %{field: :float_field, type: :float, op: :eq, value: 5.0},
+            %{field: :datetime_field, type: :datetime, op: :gt, value: "2020-01-01T01:01:01"}
+          ]
+        })
 
       q = inspect(query)
 
@@ -47,14 +49,16 @@ defmodule Boreray.EctoQuery.FilterTest do
       assert q =~ ~r/\w{2}\.float_field == \^5.0/
 
       assert q =~
-              ~r/\w{2}\.datetime_field > fragment\("TO_TIMESTAMP\(\?, 'YYYY-MM-DD HH24:MI:SS'\)", \^"2020-01-01 01:01:01"\)/
+               ~r/\w{2}\.datetime_field > fragment\("TO_TIMESTAMP\(\?, 'YYYY-MM-DD HH24:MI:SS'\)", \^"2020-01-01 01:01:01"\)/
     end
 
     test "applies `eq` -> nil filter", %{query: initial} do
       query =
-        Filter.update(initial, %{filter: [
-          %{field: :datetime_field, type: :utc_datetime_usec, op: :eq, value: nil}
-        ]})
+        Filter.update(initial, %{
+          filter: [
+            %{field: :datetime_field, type: :utc_datetime_usec, op: :eq, value: nil}
+          ]
+        })
 
       q = inspect(query)
 
@@ -64,9 +68,11 @@ defmodule Boreray.EctoQuery.FilterTest do
 
     test "applies `like` filter", %{query: initial} do
       query =
-        Filter.update(initial, %{filter: [
-          %{field: :string_field, type: :string, op: :like, value: "astring"}
-        ]})
+        Filter.update(initial, %{
+          filter: [
+            %{field: :string_field, type: :string, op: :like, value: "astring"}
+          ]
+        })
 
       q = inspect(query)
 
@@ -76,9 +82,11 @@ defmodule Boreray.EctoQuery.FilterTest do
 
     test "applies `not_like` filter", %{query: initial} do
       query =
-        Filter.update(initial, %{filter: [
-          %{field: :string_field, type: :string, op: :not_like, value: "astring"}
-        ]})
+        Filter.update(initial, %{
+          filter: [
+            %{field: :string_field, type: :string, op: :not_like, value: "astring"}
+          ]
+        })
 
       q = inspect(query)
 
@@ -90,9 +98,11 @@ defmodule Boreray.EctoQuery.FilterTest do
 
     test "applies `not` filter", %{query: initial} do
       query =
-        Filter.update(initial, %{filter: [
-          %{field: :integer_field, type: :integer, op: :not, value: 5}
-        ]})
+        Filter.update(initial, %{
+          filter: [
+            %{field: :integer_field, type: :integer, op: :not, value: 5}
+          ]
+        })
 
       q = inspect(query)
 
@@ -102,9 +112,11 @@ defmodule Boreray.EctoQuery.FilterTest do
 
     test "applies greater than filter", %{query: initial} do
       query =
-        Filter.update(initial, %{filter: [
-          %{field: :integer_field, type: :integer, op: :gt, value: 5}
-        ]})
+        Filter.update(initial, %{
+          filter: [
+            %{field: :integer_field, type: :integer, op: :gt, value: 5}
+          ]
+        })
 
       q = inspect(query)
 
@@ -114,9 +126,11 @@ defmodule Boreray.EctoQuery.FilterTest do
 
     test "applies less than filter", %{query: initial} do
       query =
-        Filter.update(initial, %{filter: [
-          %{field: :integer_field, type: :integer, op: :lt, value: 5}
-        ]})
+        Filter.update(initial, %{
+          filter: [
+            %{field: :integer_field, type: :integer, op: :lt, value: 5}
+          ]
+        })
 
       q = inspect(query)
 
@@ -126,9 +140,11 @@ defmodule Boreray.EctoQuery.FilterTest do
 
     test "applies greater than or equal to filter", %{query: initial} do
       query =
-        Filter.update(initial, %{filter: [
-          %{field: :integer_field, type: :integer, op: :gte, value: 5}
-        ]})
+        Filter.update(initial, %{
+          filter: [
+            %{field: :integer_field, type: :integer, op: :gte, value: 5}
+          ]
+        })
 
       q = inspect(query)
 
@@ -138,9 +154,11 @@ defmodule Boreray.EctoQuery.FilterTest do
 
     test "applies less than or equal to filter", %{query: initial} do
       query =
-        Filter.update(initial, %{filter: [
-          %{field: :integer_field, type: :integer, op: :lte, value: 5}
-        ]})
+        Filter.update(initial, %{
+          filter: [
+            %{field: :integer_field, type: :integer, op: :lte, value: 5}
+          ]
+        })
 
       q = inspect(query)
 
@@ -150,9 +168,11 @@ defmodule Boreray.EctoQuery.FilterTest do
 
     test "applies not null filter", %{query: initial} do
       query =
-        Filter.update(initial, %{filter: [
-          %{field: :integer_field, type: :integer, op: :not, value: nil}
-        ]})
+        Filter.update(initial, %{
+          filter: [
+            %{field: :integer_field, type: :integer, op: :not, value: nil}
+          ]
+        })
 
       q = inspect(query)
 
@@ -162,9 +182,11 @@ defmodule Boreray.EctoQuery.FilterTest do
 
     test "applies is null filter", %{query: initial} do
       query =
-        Filter.update(initial, %{filter: [
-          %{field: :integer_field, type: :integer, op: :eq, value: nil}
-        ]})
+        Filter.update(initial, %{
+          filter: [
+            %{field: :integer_field, type: :integer, op: :eq, value: nil}
+          ]
+        })
 
       q = inspect(query)
 

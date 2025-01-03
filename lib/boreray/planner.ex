@@ -23,20 +23,20 @@ defmodule Boreray.Planner do
   end
 
   defp add_param("per_page", limit, _schema) do
-    {:limit, to_int(limit), []} 
+    {:limit, to_int(limit), []}
   end
 
   defp add_param("limit", limit, _schema) do
-    {:limit, to_int(limit), []} 
+    {:limit, to_int(limit), []}
   end
 
   defp add_param("page", page, _schema) do
-    {:page, to_int(page), []} 
+    {:page, to_int(page), []}
   end
 
   defp add_param("sort", field, schema) do
     {field, error} = validate_field(field, schema)
-    {:sort, field, List.wrap(error)} 
+    {:sort, field, List.wrap(error)}
   end
 
   defp add_param("sort_dir", dir, _schema) do
@@ -132,7 +132,7 @@ defmodule Boreray.Planner do
 
   defp validate_field(field, schema) do
     field = to_atom(field)
-    
+
     if field && schema[field] do
       {field, nil}
     else

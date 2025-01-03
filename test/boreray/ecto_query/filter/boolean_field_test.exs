@@ -8,7 +8,9 @@ defmodule Boreray.EctoQuery.Filter.BooleanFieldTest do
   end
 
   describe "evaluate/4" do
-    test "updates query properly when operator is `eq` and castable value is true", %{query: query} do
+    test "updates query properly when operator is `eq` and castable value is true", %{
+      query: query
+    } do
       query = BooleanField.evaluate(query, :foo, :eq, true)
       q = inspect(query)
       assert q =~ ~r/where:/
@@ -27,7 +29,9 @@ defmodule Boreray.EctoQuery.Filter.BooleanFieldTest do
       assert q =~ ~r/\w{2}\.foo == \^true/
     end
 
-    test "updates query properly when operator is `eq` and castable value is false", %{query: query} do
+    test "updates query properly when operator is `eq` and castable value is false", %{
+      query: query
+    } do
       query = BooleanField.evaluate(query, :foo, :eq, false)
       q = inspect(query)
       assert q =~ ~r/where:/
@@ -46,7 +50,9 @@ defmodule Boreray.EctoQuery.Filter.BooleanFieldTest do
       assert q =~ ~r/\w{2}\.foo == \^false/
     end
 
-    test "updates query properly when operator is `not` and castable value is true", %{query: query} do
+    test "updates query properly when operator is `not` and castable value is true", %{
+      query: query
+    } do
       query = BooleanField.evaluate(query, :foo, :not, true)
       q = inspect(query)
       assert q =~ ~r/where:/
@@ -65,7 +71,9 @@ defmodule Boreray.EctoQuery.Filter.BooleanFieldTest do
       assert q =~ ~r/\w{2}\.foo != \^true/
     end
 
-    test "updates query properly when operator is `not` and castable value is false", %{query: query} do
+    test "updates query properly when operator is `not` and castable value is false", %{
+      query: query
+    } do
       query = BooleanField.evaluate(query, :foo, :not, false)
       q = inspect(query)
       assert q =~ ~r/where:/

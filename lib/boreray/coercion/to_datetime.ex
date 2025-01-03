@@ -1,5 +1,4 @@
 defmodule Boreray.Coercion.ToDatetime do
-
   def cast(val) when is_binary(val) do
     with {:error, _} <- DateTimeParser.parse(val, assume_time: true) do
       :error
@@ -23,6 +22,7 @@ defmodule Boreray.Coercion.ToDatetime do
       {:ok, parsed} ->
         shifted = Timex.shift(parsed, shift_opts)
         do_format_datetime(shifted)
+
       :error ->
         raise "The filter value could not be parsed into not a date or datetime."
     end

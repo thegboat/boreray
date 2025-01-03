@@ -23,10 +23,12 @@ defmodule Boreray.Schema do
 
   def build(module) when is_atom(module) do
     cond do
-      sorta_ecto?(module)  ->
+      sorta_ecto?(module) ->
         ecto_build(module)
+
       function_exported?(module, :__field_info__, 0) ->
         module_build(module)
+
       true ->
         raise_module_error(module)
     end
@@ -43,13 +45,13 @@ defmodule Boreray.Schema do
         {to_atom(f), type}
       end
     end)
-    |> Map.new()   
+    |> Map.new()
   end
 
   defp ecto_build(module) do
     :fields
     |> module.__schema__()
-    |> Enum.map(& {&1, module.__schema__(:type, &1)})
+    |> Enum.map(&{&1, module.__schema__(:type, &1)})
     |> build()
   end
 

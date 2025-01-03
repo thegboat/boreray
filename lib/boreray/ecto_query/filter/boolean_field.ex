@@ -2,7 +2,7 @@ defmodule Boreray.EctoQuery.Filter.BooleanField do
   @moduledoc false
 
   import Ecto.Query, only: [where: 3]
-  alias Boreray.Coercion.ToBoolean 
+  alias Boreray.Coercion.ToBoolean
 
   @spec evaluate(Ecto.Query.t(), atom(), String.t(), any()) :: Ecto.Query.t()
   def evaluate(query, field, op, val) do
