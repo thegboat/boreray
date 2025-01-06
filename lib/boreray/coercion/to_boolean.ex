@@ -1,5 +1,6 @@
 defmodule Boreray.Coercion.ToBoolean do
   @moduledoc false
+  alias Boreray.Coercion.Undefined
 
   def cast(val) do
     casted =
@@ -10,7 +11,7 @@ defmodule Boreray.Coercion.ToBoolean do
     cond do
       casted =~ ~r/^(true|1|t)$/i -> true
       casted =~ ~r/^(false|0|f)$/i -> false
-      true -> :error
+      true -> %Undefined{type: :boolean, value: val}
     end
   end
 end

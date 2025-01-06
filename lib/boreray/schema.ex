@@ -1,43 +1,23 @@
 defmodule Boreray.Schema do
   @moduledoc false
 
-  @types %{
-    "integer" => :integer,
-    "float" => :decimal,
-    "boolean" => :boolean,
-    "string" => :string,
-    "binary" => :string,
-    "decimal" => :decimal,
-    "id" => :integer,
-    "binary_id" => :string,
-    "utc_datetime" => :datetime,
-    "naive_datetime" => :datetime,
-    "date" => :datetime,
-    "utc_datetime_usec" => :datetime,
-    "naive_datetime_usec" => :datetime,
-    "map" => :any,
-    "any" => :any,
-    "time" => :time,
-    "time_usec" => :time
-  }
-
-  def build(module) when is_atom(module) do
+  def build(module, valid_types) when is_atom(module) do
     cond do
       sorta_ecto?(module) ->
-        ecto_build(module)
+        ecto_build(module, valid_types)
 
       function_exported?(module, :__field_info__, 0) ->
-        module_build(module)
+        module_build(module, valid_types)
 
       true ->
         raise_module_error(module)
     end
   end
 
-  def build(schema) when is_list(schema) or is_map(schema) do
+  def build(schema, valid_types) when is_list(schema) or is_map(schema) do
     schema
     |> Stream.map(fn {f, t} ->
-      type = @types[to_string(t)]
+      type = valid_types[to_string(t)]
 
       if is_nil(type) do
         raise_unknown_type(t)
@@ -48,15 +28,15 @@ defmodule Boreray.Schema do
     |> Map.new()
   end
 
-  defp ecto_build(module) do
+  defp ecto_build(module, valid_types) do
     :fields
     |> module.__schema__()
     |> Enum.map(&{&1, module.__schema__(:type, &1)})
-    |> build()
+    |> build(valid_types)
   end
 
-  defp module_build(module) do
-    build(module.__field_info__())
+  defp module_build(module, valid_types) do
+    build(module.__field_info__(), valid_types)
   end
 
   defp sorta_ecto?(module) do

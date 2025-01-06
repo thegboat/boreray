@@ -5,11 +5,13 @@ defmodule Boreray.Operation do
           field: atom,
           type: atom,
           op: atom,
-          value: any
+          value: any,
+          regex: Regex.t() | nil
         }
 
   defstruct field: nil,
             type: nil,
             op: :eq,
-            value: nil
+            value: nil,
+            regex: nil
 end

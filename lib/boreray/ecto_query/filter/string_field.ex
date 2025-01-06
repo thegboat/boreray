@@ -12,14 +12,26 @@ defmodule Boreray.EctoQuery.Filter.StringField do
   end
 
   def do_evaluate(query, field, :like, val) do
-    where(query, [x], fragment("REGEXP_LIKE(?, ?, 'in')", field(x, ^field), ^val))
+    where(query, [x], fragment("REGEXP_LIKE(?, ?, 'mc')", field(x, ^field), ^val))
   end
 
   def do_evaluate(query, field, :not_like, val) do
     where(
       query,
       [x],
-      is_nil(field(x, ^field)) or fragment("NOT REGEXP_LIKE(?, ?, 'in')", field(x, ^field), ^val)
+      is_nil(field(x, ^field)) or fragment("NOT REGEXP_LIKE(?, ?, 'mc')", field(x, ^field), ^val)
+    )
+  end
+
+  def do_evaluate(query, field, :ilike, val) do
+    where(query, [x], fragment("REGEXP_LIKE(?, ?, 'mi')", field(x, ^field), ^val))
+  end
+
+  def do_evaluate(query, field, :not_ilike, val) do
+    where(
+      query,
+      [x],
+      is_nil(field(x, ^field)) or fragment("NOT REGEXP_LIKE(?, ?, 'mi')", field(x, ^field), ^val)
     )
   end
 

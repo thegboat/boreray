@@ -36,7 +36,7 @@ defmodule Boreray.EctoQuery.FilterTest do
             %{field: :string_field, type: :string, op: :eq, value: "astring"},
             %{field: :integer_field, type: :integer, op: :eq, value: 5},
             %{field: :float_field, type: :float, op: :eq, value: 5.0},
-            %{field: :datetime_field, type: :datetime, op: :gt, value: "2020-01-01T01:01:01"}
+            %{field: :datetime_field, type: :datetime, op: :gt, value: "2020-01-01 01:01:01"}
           ]
         })
 
@@ -77,7 +77,7 @@ defmodule Boreray.EctoQuery.FilterTest do
       q = inspect(query)
 
       assert q =~ ~r/where:/
-      assert q =~ ~r/fragment\("REGEXP_LIKE\(\?, \?, 'in'\)", \w{2}.string_field, \^"astring"\)/
+      assert q =~ ~r/fragment\("REGEXP_LIKE\(\?, \?, 'mc'\)", \w{2}.string_field, \^"astring"\)/
     end
 
     test "applies `not_like` filter", %{query: initial} do
@@ -93,7 +93,37 @@ defmodule Boreray.EctoQuery.FilterTest do
       assert q =~ ~r/where:/
 
       assert q =~
-               ~r/is_nil\(\w{2}.string_field\) or fragment\("NOT REGEXP_LIKE\(\?, \?, 'in'\)", \w{2}.string_field, \^"astring"\)/
+               ~r/is_nil\(\w{2}.string_field\) or fragment\("NOT REGEXP_LIKE\(\?, \?, 'mc'\)", \w{2}.string_field, \^"astring"\)/
+    end
+
+    test "applies `ilike` filter", %{query: initial} do
+      query =
+        Filter.update(initial, %{
+          filter: [
+            %{field: :string_field, type: :string, op: :ilike, value: "astring"}
+          ]
+        })
+
+      q = inspect(query)
+
+      assert q =~ ~r/where:/
+      assert q =~ ~r/fragment\("REGEXP_LIKE\(\?, \?, 'mi'\)", \w{2}.string_field, \^"astring"\)/
+    end
+
+    test "applies `not_ilike` filter", %{query: initial} do
+      query =
+        Filter.update(initial, %{
+          filter: [
+            %{field: :string_field, type: :string, op: :not_ilike, value: "astring"}
+          ]
+        })
+
+      q = inspect(query)
+
+      assert q =~ ~r/where:/
+
+      assert q =~
+               ~r/is_nil\(\w{2}.string_field\) or fragment\("NOT REGEXP_LIKE\(\?, \?, 'mi'\)", \w{2}.string_field, \^"astring"\)/
     end
 
     test "applies `not` filter", %{query: initial} do

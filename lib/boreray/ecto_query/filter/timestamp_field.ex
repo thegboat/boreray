@@ -12,37 +12,32 @@ defmodule Boreray.EctoQuery.Filter.TimestampField do
     end
   end
 
-  @spec evaluate(Ecto.Query.t(), atom(), String.t(), any()) :: Ecto.Query.t()
-  def evaluate(query, field, op, val) do
-    formatted = Boreray.Coercion.ToDatetime.format_datetime!(val)
-    do_evaluate(query, field, op, formatted)
-  end
-
-  defp do_evaluate(query, field, :eq, val) do
+  @spec evaluate(Ecto.Query.t(), atom(), String.t(), String.t()) :: Ecto.Query.t()
+  def evaluate(query, field, :eq, val) do
     where(query, [x], field(x, ^field) == to_timestamp(val))
   end
 
-  defp do_evaluate(query, field, :gt, val) do
+  def evaluate(query, field, :gt, val) do
     where(query, [x], field(x, ^field) > to_timestamp(val))
   end
 
-  defp do_evaluate(query, field, :lt, val) do
+  def evaluate(query, field, :lt, val) do
     where(query, [x], field(x, ^field) < to_timestamp(val))
   end
 
-  defp do_evaluate(query, field, :gte, val) do
+  def evaluate(query, field, :gte, val) do
     where(query, [x], field(x, ^field) >= to_timestamp(val))
   end
 
-  defp do_evaluate(query, field, :lte, val) do
+  def evaluate(query, field, :lte, val) do
     where(query, [x], field(x, ^field) <= to_timestamp(val))
   end
 
-  defp do_evaluate(query, field, :not, val) do
+  def evaluate(query, field, :not, val) do
     where(query, [x], field(x, ^field) != to_timestamp(val))
   end
 
-  defp do_evaluate(query, field, op, val) do
+  def evaluate(query, field, op, val) do
     Common.evaluate(query, field, op, val)
   end
 end

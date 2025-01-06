@@ -1,11 +1,11 @@
 defmodule Boreray.Planner do
   @moduledoc false
 
+  alias Boreray.Coercion
   alias Boreray.Operation
   alias Boreray.Plan
 
-  @nulls ~w(NULL null nil)
-  @ops ~w(eq not is is_not in not_in like not_like gt lt gte lte)
+  @ops ~w(eq not is is_not in not_in like ilike not_like not_ilike gt lt gte lte)
 
   def build_plan(params, schema) when is_list(params) do
     build_plan(%{"filter" => Map.new(params)}, schema)
@@ -13,7 +13,7 @@ defmodule Boreray.Planner do
 
   def build_plan(params, schema) when is_map(params) do
     params
-    |> Stream.map(fn {k, v} -> add_param(to_string(k), v, schema) end)
+    |> Stream.flat_map(fn {k, v} -> add_param(to_string(k), v, schema) end)
     |> Stream.reject(fn {_k, v, _e} -> is_nil(v) end)
     |> Enum.reduce(%Plan{}, fn {key, value, errors}, plan ->
       plan
@@ -35,8 +35,13 @@ defmodule Boreray.Planner do
   end
 
   defp add_param("sort", field, schema) do
-    {field, error} = validate_field(field, schema)
-    {:sort, field, List.wrap(error)}
+    type = schema[field]
+    error = type && invalid_field_error(field)
+
+    [
+      {:sort, field, List.wrap(error)},
+      {:sort_type, field, []}
+    ]
   end
 
   defp add_param("sort_dir", dir, _schema) do
@@ -79,50 +84,16 @@ defmodule Boreray.Planner do
     build_operation(field, type, "eq", val)
   end
 
-  defp build_operation(field, _type, op, _val) when op not in @ops do
-    invalid_op_error(field, op)
-  end
-
-  defp build_operation(field, type, op, list) when is_list(list) do
-    op =
-      case op do
-        "is" -> :in
-        "is_not" -> :not_in
-        "eq" -> :in
-        "not" -> :not_in
-        keep -> String.to_atom(keep)
-      end
-
-    %Operation{
-      field: field,
-      type: type,
-      op: op,
-      value: list
-    }
-  end
-
-  defp build_operation(field, type, "is", val) do
-    if val in @nulls do
-      %Operation{field: field, type: type}
-    else
-      %Operation{field: field, type: type, value: val}
-    end
-  end
-
-  defp build_operation(field, type, "is_not", val) do
-    if val in @nulls do
-      %Operation{field: field, type: type, op: :not}
-    else
-      %Operation{field: field, type: type, value: val, op: :not}
-    end
-  end
-
   defp build_operation(field, type, op, val) when op in @ops do
+    op = String.to_atom(op)
+    val = Coercion.cast(val, type, op)
+
     %Operation{
       field: field,
       type: type,
-      op: String.to_atom(op),
-      value: val
+      op: normalize_op(op),
+      value: val,
+      regex: Coercion.cast(val, :regex, op)
     }
   end
 
@@ -130,15 +101,9 @@ defmodule Boreray.Planner do
     invalid_op_error(field, op)
   end
 
-  defp validate_field(field, schema) do
-    field = to_atom(field)
-
-    if field && schema[field] do
-      {field, nil}
-    else
-      {field, invalid_field_error(field)}
-    end
-  end
+  defp normalize_op(:is), do: :eq
+  defp normalize_op(:is_not), do: :not
+  defp normalize_op(op), do: op
 
   defp invalid_op_error(field, op) do
     "The operator `#{op}` for field `#{field}` is invalid."
@@ -147,15 +112,6 @@ defmodule Boreray.Planner do
   defp invalid_field_error(field) do
     "The field `#{field}` is not a valid field for the schema."
   end
-
-  defp to_atom(field) when is_binary(field) do
-    String.to_existing_atom(field)
-  rescue
-    _ ->
-      nil
-  end
-
-  defp to_atom(field) when is_atom(field), do: field
 
   defp to_int(i) when is_binary(i) do
     i

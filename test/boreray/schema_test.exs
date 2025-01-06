@@ -1,6 +1,7 @@
 defmodule Boreray.SchemaTest do
   use ExUnit.Case
 
+  alias Boreray.EctoQuery
   alias Boreray.Schema
 
   defmodule FieldInfoDefined do
@@ -29,67 +30,43 @@ defmodule Boreray.SchemaTest do
       field(:date_field, :date)
       field(:utc_datetime_usec_field, :utc_datetime_usec)
       field(:naive_datetime_usec_field, :naive_datetime_usec)
-      field(:map_field, :map)
-      field(:time_field, :time)
-      field(:time_usec_field, :time_usec)
     end
   end
 
-  describe "build/1" do
+  describe "build/2" do
     test "can build schema from Keyword list" do
       assert %{
                field1: :string,
                field2: :integer
-             } == Schema.build(field1: "string", field2: "integer")
+             } == Schema.build([field1: "string", field2: "integer"], EctoQuery.types())
     end
 
     test "can build schema from map" do
       assert %{
                field1: :string,
                field2: :integer
-             } == Schema.build(%{field1: "string", field2: "integer"})
+             } == Schema.build(%{field1: "string", field2: "integer"}, EctoQuery.types())
     end
 
     test "can build schema from list of tuple pairs" do
       assert %{
                field1: :string,
                field2: :integer
-             } == Schema.build([{"field1", "string"}, {"field2", "integer"}])
+             } == Schema.build([{"field1", "string"}, {"field2", "integer"}], EctoQuery.types())
     end
 
     test "can build schema from module with `__field_info__/0` defined" do
       assert %{
                field1: :string,
                field2: :integer
-             } == Schema.build(FieldInfoDefined)
+             } == Schema.build(FieldInfoDefined, EctoQuery.types())
     end
 
     test "can build schema from module with Ecto Schema `__schema__` behavior" do
       assert %{
                string_field: :string,
                integer_field: :integer
-             } = Schema.build(EctoSchemaResource)
-    end
-
-    test "properly coalesces types to unsupported or common types" do
-      assert %{
-               integer_field: :integer,
-               float_field: :decimal,
-               boolean_field: :boolean,
-               string_field: :string,
-               binary_field: :string,
-               decimal_field: :decimal,
-               id_field: :integer,
-               binary_id_field: :string,
-               utc_datetime_field: :datetime,
-               naive_datetime_field: :datetime,
-               date_field: :datetime,
-               utc_datetime_usec_field: :datetime,
-               naive_datetime_usec_field: :datetime,
-               map_field: :any,
-               time_field: :time,
-               time_usec_field: :time
-             } = Schema.build(EctoSchemaResource)
+             } = Schema.build(EctoSchemaResource, EctoQuery.types())
     end
   end
 end

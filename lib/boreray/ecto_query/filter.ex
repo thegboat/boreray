@@ -21,6 +21,10 @@ defmodule Boreray.EctoQuery.Filter do
     __MODULE__.ListValue.evaluate(query, field, op, val)
   end
 
+  defp evaluate(query, field, type, op, %MapSet{} = val) do
+    evaluate(query, field, type, op, MapSet.to_list(val))
+  end
+
   defp evaluate(query, field, :boolean, op, val) do
     __MODULE__.BooleanField.evaluate(query, field, op, val)
   end

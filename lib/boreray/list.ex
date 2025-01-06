@@ -1,18 +1,12 @@
-defmodule Boreray.EctoQuery do
+defmodule Boreray.List do
   @moduledoc false
-  require Ecto.Query
   alias Boreray.Planner
   alias Boreray.Schema
 
-  def build(module, params) when is_atom(module) do
-    query = Ecto.Query.from(x in Ecto.Query.subquery(module))
-    build(module, query, params)
-  end
-
-  def build(module, %Ecto.Query{} = query, params) do
+  def build(module, list, params) do
     schema = Schema.build(module, types())
     plan = Planner.build_plan(params, schema)
-    do_build(query, plan)
+    do_build(list, plan)
   end
 
   def types do
@@ -29,14 +23,18 @@ defmodule Boreray.EctoQuery do
       "naive_datetime" => :datetime,
       "date" => :datetime,
       "utc_datetime_usec" => :datetime,
-      "naive_datetime_usec" => :datetime
+      "naive_datetime_usec" => :datetime,
+      "array" => :array,
+      "time" => :time,
+      "time_usec" => :time
     }
   end
 
-  defp do_build(queryable, plan) do
-    queryable
-    |> __MODULE__.Pagination.update(plan)
-    |> __MODULE__.Sort.update(plan)
+  defp do_build(list, plan) do
+    list
     |> __MODULE__.Filter.update(plan)
+    |> __MODULE__.Sort.update(plan)
+    |> __MODULE__.Pagination.update(plan)
+    |> Enum.into([])
   end
 end

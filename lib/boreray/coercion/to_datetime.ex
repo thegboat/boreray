@@ -1,34 +1,29 @@
 defmodule Boreray.Coercion.ToDatetime do
-  def cast(val) when is_binary(val) do
-    with {:error, _} <- DateTimeParser.parse(val, assume_time: true) do
-      :error
+  @moduledoc false
+  alias Boreray.Coercion.Undefined
+
+  def cast(val) do
+    case parse(val) do
+      {:error, _} -> %Undefined{type: :datetime, value: val}
+      {:ok, parsed} -> format(parsed)
     end
   end
 
-  def cast(%DateTime{} = val), do: val
+  def parse(val) when is_binary(val) do
+    DateTimeParser.parse(val, assume_time: true)
+  end
 
-  def cast(%Date{} = val) do
+  def parse(%DateTime{} = val), do: {:ok, val}
+
+  def parse(%Date{} = val) do
     DateTime.new(val, Time.new!(0, 0, 0), "Etc/UTC")
   end
 
-  def cast(%NaiveDateTime{} = val) do
+  def parse(%NaiveDateTime{} = val) do
     DateTime.from_naive(val, "Etc/UTC")
   end
 
-  def cast(_), do: :error
-
-  def format_datetime!(val, shift_opts \\ []) do
-    case cast(val) do
-      {:ok, parsed} ->
-        shifted = Timex.shift(parsed, shift_opts)
-        do_format_datetime(shifted)
-
-      :error ->
-        raise "The filter value could not be parsed into not a date or datetime."
-    end
-  end
-
-  defp do_format_datetime(t) do
+  defp format(t) do
     "#{pad(t.year)}-#{pad(t.month)}-#{pad(t.day)} #{pad(t.hour)}:#{pad(t.minute)}:#{pad(t.second)}"
   end
 

@@ -9,7 +9,7 @@ defmodule Boreray.EctoQuery.Filter.DateFieldTest do
 
   describe "evaluate/4" do
     test "updates query properly when operator is `eq` and type is date", %{query: query} do
-      query = DateField.evaluate(query, :foo, :eq, "2020-01-01T01:01:01")
+      query = DateField.evaluate(query, :foo, :eq, "2020-01-01 01:01:01")
       q = inspect(query)
 
       assert q =~
@@ -17,7 +17,7 @@ defmodule Boreray.EctoQuery.Filter.DateFieldTest do
     end
 
     test "updates query properly when operator is `not` and type is date", %{query: query} do
-      query = DateField.evaluate(query, :foo, :not, "2020-01-01T01:01:01")
+      query = DateField.evaluate(query, :foo, :not, "2020-01-01 01:01:01")
       q = inspect(query)
 
       assert q =~
@@ -25,7 +25,7 @@ defmodule Boreray.EctoQuery.Filter.DateFieldTest do
     end
 
     test "updates query properly when operator is `lt` and type is date", %{query: query} do
-      query = DateField.evaluate(query, :foo, :lt, "2020-01-01T01:01:01")
+      query = DateField.evaluate(query, :foo, :lt, "2020-01-01 01:01:01")
       q = inspect(query)
 
       assert q =~
@@ -33,7 +33,7 @@ defmodule Boreray.EctoQuery.Filter.DateFieldTest do
     end
 
     test "updates query properly when operator is `lte` and type is date", %{query: query} do
-      query = DateField.evaluate(query, :foo, :lte, "2020-01-01T01:01:01")
+      query = DateField.evaluate(query, :foo, :lte, "2020-01-01 01:01:01")
       q = inspect(query)
 
       assert q =~
@@ -41,7 +41,7 @@ defmodule Boreray.EctoQuery.Filter.DateFieldTest do
     end
 
     test "updates query properly when operator is `gt` and type is date", %{query: query} do
-      query = DateField.evaluate(query, :foo, :gt, "2020-01-01T01:01:01")
+      query = DateField.evaluate(query, :foo, :gt, "2020-01-01 01:01:01")
       q = inspect(query)
 
       assert q =~
@@ -49,7 +49,7 @@ defmodule Boreray.EctoQuery.Filter.DateFieldTest do
     end
 
     test "updates query properly when operator is `gte` and type is date", %{query: query} do
-      query = DateField.evaluate(query, :foo, :gte, "2020-01-01T01:01:01")
+      query = DateField.evaluate(query, :foo, :gte, "2020-01-01 01:01:01")
       q = inspect(query)
 
       assert q =~

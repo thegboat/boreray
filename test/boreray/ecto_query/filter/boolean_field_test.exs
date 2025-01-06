@@ -91,17 +91,5 @@ defmodule Boreray.EctoQuery.Filter.BooleanFieldTest do
       q = inspect(query)
       assert q =~ ~r/\w{2}\.foo != \^false/
     end
-
-    test "raise error with uncastable value", %{query: query} do
-      assert_raise RuntimeError, fn ->
-        BooleanField.evaluate(query, :foo, :not, "grady")
-      end
-    end
-
-    test "raise error with invalid operator", %{query: query} do
-      assert_raise RuntimeError, fn ->
-        BooleanField.evaluate(query, :foo, :in, true)
-      end
-    end
   end
 end

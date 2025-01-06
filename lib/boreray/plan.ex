@@ -6,6 +6,7 @@ defmodule Boreray.Plan do
   @type t :: %__MODULE__{
           filters: list(Operation.t()),
           sort: nil | atom,
+          sort_type: nil | atom,
           sort_dir: :asc | :desc,
           limit: nil | integer,
           page: integer,
@@ -14,6 +15,7 @@ defmodule Boreray.Plan do
 
   defstruct filters: [],
             sort: nil,
+            sort_type: nil,
             sort_dir: :asc,
             limit: nil,
             page: 1,
