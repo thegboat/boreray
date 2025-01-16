@@ -5,7 +5,10 @@ defmodule Boreray.Planner do
   alias Boreray.Operation
   alias Boreray.Plan
 
-  @ops ~w(eq not is is_not in not_in like ilike not_like not_ilike gt lt gte lte)
+  @eq ~w(eq not is is_not)
+  @cmp ~w(gt lt gte lte)
+  @re ~w(like ilike not_like not_ilike)
+  @set ~w(in not_in)
 
   def build_plan(params, schema) when is_list(params) do
     build_plan(%{"filter" => Map.new(params)}, schema)
@@ -84,29 +87,51 @@ defmodule Boreray.Planner do
     build_operation(field, type, "eq", val)
   end
 
-  defp build_operation(field, type, op, val) when op in @ops do
-    op = String.to_atom(op)
-    val = Coercion.cast(val, type, op)
+  defp build_operation(field, :string, op, val) when op in @re do
+    new_operation(field, :string, op, val)
+  end
 
+  defp build_operation(field, type, "eq", val) when is_list(val) do
+    new_operation(field, type, :in, val)
+  end
+
+  defp build_operation(field, type, op, val) when op in @eq do
+    new_operation(field, type, op, val)
+  end
+
+  defp build_operation(field, :boolean, op, _val) do
+    invalid_op_error(field, op, :boolean)
+  end
+
+  defp build_operation(field, type, op, val) when op in @set do
+    new_operation(field, type, op, List.wrap(val))
+  end
+
+  defp build_operation(field, type, op, val) when op in @cmp do
+    new_operation(field, type, op, val)
+  end
+
+  defp build_operation(field, type, op, _val) do
+    invalid_op_error(field, op, type)
+  end
+
+  defp new_operation(field, type, op, val) do
+    op = String.to_atom(op)
     %Operation{
       field: field,
       type: type,
       op: normalize_op(op),
-      value: val,
+      value: Coercion.cast(val, type, op),
       regex: Coercion.cast(val, :regex, op)
     }
   end
 
-  defp build_operation(field, _type, op, _val) do
-    invalid_op_error(field, op)
-  end
-
   defp normalize_op(:is), do: :eq
   defp normalize_op(:is_not), do: :not
-  defp normalize_op(op), do: op
+  defp normalize_op(op), do: String.to_atom(op)
 
-  defp invalid_op_error(field, op) do
-    "The operator `#{op}` for field `#{field}` is invalid."
+  defp invalid_op_error(field, op, type) do
+    "The operator `#{op}` for field `#{field}` of type `#{type}` is invalid."
   end
 
   defp invalid_field_error(field) do

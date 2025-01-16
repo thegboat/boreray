@@ -5,7 +5,9 @@ defmodule Boreray.Coercion.ToNumeric do
   def cast(%Decimal{} = val), do: val
 
   def cast(val) when is_number(val) do
-    Decimal.new(val)
+    val
+    |> to_string()
+    |> cast()
   end
 
   def cast(val) when is_binary(val) do
